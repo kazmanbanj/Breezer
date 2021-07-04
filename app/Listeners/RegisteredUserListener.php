@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\RegisteredUserNotification;
 
-class RegisteredUserListener implements ShouldQueue
+class RegisteredUserListener
 {
     /**
      * Create the event listener.
