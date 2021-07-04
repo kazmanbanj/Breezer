@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Auth\Events\Registered;
 use App\Providers\RouteServiceProvider;
+use App\Jobs\SendRegisteredUserNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\RegisteredUserNotification;
 
@@ -48,12 +49,9 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
+        SendRegisteredUserNotification::dispatch($user);
 
-        $admins = User::where('is_admin', 1)->get();
-        foreach ($admins as $admin) {
-            Mail::to($admin)->send(new RegisteredUserMail());
-        }
+        event(new Registered($user));
 
         Auth::login($user);
 

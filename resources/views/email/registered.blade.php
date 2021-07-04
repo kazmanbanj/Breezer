@@ -18,7 +18,7 @@
     </head>
     <body>
         <div class="font-sans text-gray-900 antialiased">
-            <p>New user registered</p>
+            <p>New user {{ $name }} with email ({{ $email }}) is registered</p>
         </div>
     </body>
 </html>
