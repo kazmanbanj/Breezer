@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Mail\RegisteredUserMail;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Auth\Events\Registered;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Notification;
@@ -46,10 +48,12 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $admins = User::where('is_admin', 1)->get();
-        Notification::send($admins, new RegisteredUserNotification($user));
-
         event(new Registered($user));
+
+        $admins = User::where('is_admin', 1)->get();
+        foreach ($admins as $admin) {
+            Mail::to($admin)->send(new RegisteredUserMail());
+        }
 
         Auth::login($user);
 
