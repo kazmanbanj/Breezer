@@ -20,7 +20,7 @@ class RegisteredUserMail extends Mailable
      */
     public function __construct($user)
     {
-        $this->user = $user;
+        $this->users = $user;
     }
 
     /**
@@ -30,6 +30,6 @@ class RegisteredUserMail extends Mailable
      */
     public function build()
     {
-        return $this->view('email.registered', $this->user);
+        return $this->view('email.registered', ['name' => $this->user->name, 'email' => $this->user->email]);
     }
 }
