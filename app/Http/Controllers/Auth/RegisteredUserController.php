@@ -50,6 +50,7 @@ class RegisteredUserController extends Controller
         ]);
 
         SendRegisteredUserNotification::dispatch($user);
+        // SendRegisteredUserNotification::dispatch($user)->delay(now()->addMinutes(15));
 
         event(new Registered($user));
 

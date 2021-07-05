@@ -20,7 +20,7 @@ class SendRegisteredUserNotification implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $user;
-    // public $tries = 3;
+    public $tries = 3;
     // public $backoff = 3;
 
     /**
@@ -40,12 +40,18 @@ class SendRegisteredUserNotification implements ShouldQueue
      */
     public function handle()
     {
-        $admins = User::where('is_admin', 1)->get();
-        foreach ($admins as $admin) {
-            Mail::to($admin)->send(new RegisteredUserMail($this->user));
+        if ($this->user->email_verified_at) {       // Delaying jobs if some conditions fails
+            $admins = User::where('is_admin', 1)->get();
+            foreach ($admins as $admin) {
+                Mail::to($admin)->send(new RegisteredUserMail($this->user));
+            }
+        } else {    // repeating the job a bit later if the condition fails now
+            if ($this->attempts() < 2) {
+                $this->release(60);
+            } else {
+                $this->release(120);
+            }
         }
-
-        Bugsnag::notifyException(new RuntimeException("Test error"));
     }
 
     // public function failed(\Throwable $exception)
