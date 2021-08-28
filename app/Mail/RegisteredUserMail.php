@@ -20,7 +20,7 @@ class RegisteredUserMail extends Mailable
      */
     public function __construct($user)
     {
-        $this->users = $user;
+        $this->user = $user;
     }
 
     /**
